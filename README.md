@@ -16,7 +16,7 @@ ToDO:
 The package is not yet registered in Meta-Data. You will need to clone it from this site:
 
 ```julia-REPL
-Julia> Pkg.clone(https://github.com/ChristianKurz/REPLTetris.jl)
+Julia> Pkg.clone("https://github.com/ChristianKurz/REPLTetris.jl")
 Julia> using REPLTetris
 Julia> tetris()
 ```

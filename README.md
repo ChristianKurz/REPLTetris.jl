@@ -25,7 +25,7 @@ Still needs some work to improve rendering speed - but it's suprisingly playable
  ◼  ◼  ◼  ◻  ◼  ◼  ◼  ◼  ◼  ◻
  ◼  ◼  ◼  ◼  ◼  ◼  ◼  ◼  ◻  ◼
  Round:27           Score:49
-](resources/Screenshot.png)
+](resources/Screenshot.PNG)
 
 ToDO:
 - [ ] improve rendering speed

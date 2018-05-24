@@ -1,6 +1,6 @@
-The ReplTetris.jl package is licensed under the MIT "Expat" License:
+The REPLTetris.jl package is licensed under the MIT "Expat" License:
 
-> Copyright (c) 2018: Kurz Christian (BaP/TEF1.5).
+> Copyright (c) 2018: Christian Kurz.
 >
 >
 > Permission is hereby granted, free of charge, to any person obtaining a copy

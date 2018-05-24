@@ -1,5 +1,19 @@
-module ReplTetris
+__precompile__()
+module REPLTetris
 
-# package code goes here
+using StaticArrays, Crayons
+export tetris
 
-end # module
+terminal = nothing  # The user terminal
+
+function __init__()
+    global terminal
+    terminal = Base.Terminals.TTYTerminal(get(ENV, "TERM", is_windows() ? "" : "dumb"), STDIN, STDOUT, STDERR)
+end
+
+include("board.jl")
+include("pieces.jl")
+include("actions.jl")
+include("game.jl")
+
+end #module

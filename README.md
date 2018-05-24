@@ -1,4 +1,4 @@
-# REPLTetris.jl.jl
+# REPLTetris.jl
 This started as an exercise to learn terminal rendering and key-input.
 
 Still needs some work to improve rendering speed - but it's suprisingly playable.

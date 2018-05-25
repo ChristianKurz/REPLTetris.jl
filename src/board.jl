@@ -35,8 +35,7 @@ end
 function print_board(b)
     buf = IOBuffer()
     for y in 1:21
-        print("\x1b[999D\x1b[$(y)A")
-        print(buf, "\x1b[2K")
+        cursor_move_abs(buf, [0,y])
         if y == 21
             print(buf, " Round:", b.round,"\t    Score:",b.score)
             continue

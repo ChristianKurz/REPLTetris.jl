@@ -11,12 +11,11 @@ include("actions.jl")
 
 function tetris(pause=0.4)
     board = Board()
-    tile = L()
+    tile = add_tile!(board)
     raw_mode(terminal) do
+        clear_screen()
         abort = [false]
         @async while !abort[1]
-            board.round += 1
-            tile = add_tile!(board)
             while !abort[1] && drop!(board, tile)
                 @sync begin
                     @async print_board(board)
@@ -25,6 +24,8 @@ function tetris(pause=0.4)
             end
             delete_lines!(board)
             pause *= 0.97
+            board.round += 1
+            tile = add_tile!(board)
         end
         while !abort[1]
             c = readKey()

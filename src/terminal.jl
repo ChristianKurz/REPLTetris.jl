@@ -31,9 +31,9 @@ function readKey(stream::IO=STDIN)::UInt32
     return ABORT
 end
 
-function raw_mode(f, terminal)
+function raw_mode(f, terminal, hide_cursor=true)
     rawenabled = enableRawMode(terminal)
-    rawenabled && print(terminal.out_stream, "\x1b[?25l")
+    rawenabled && hide_cursor && print(terminal.out_stream, "\x1b[?25l")
     try
         f()
     finally
@@ -59,4 +59,28 @@ function disableRawMode(terminal)
         warn("TerminalMenus: Unable to disable raw mode: $err")
     end
     return false
+end
+
+cursor_move_abs(buf::IO, c::Vector{Int}=[0,0]) = print(buf, "\x1b[$(c[2]);$(c[1])H")
+cursor_move_abs(c::Vector{Int}) = cursor_move_abs(STDOUT, c)
+
+# ToDo: Remove x offset after newline
+function cursor_move_relative(buf::IO, c=[0,0])
+    x, y = c
+    x = x >= 0 ? "\x1b[$(abs(x))A" : "\x1b[$(abs(x))B"
+    y = y >= 0 ? "\x1b[$(abs(y))C" : "\x1b[$(abs(y))D"
+    print(buf, x,y)
+end
+cursor_move_relative(c::Vector{Int}) = cursor_move_relative(STDOUT, c)
+
+cursor_deleteline(buf::IO=STDOUT) = print(buf, "\x1b[2K")
+
+function clear_screen()
+    buf = IOBuffer()
+    cursor_move_abs(buf, [0,0])
+    for y in 1:50
+        cursor_move_abs(buf, [0,y])
+        cursor_deleteline(buf)
+    end
+    print(String(take!(buf)))
 end

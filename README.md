@@ -5,11 +5,11 @@ Still needs some work to improve rendering speed - but it's suprisingly playable
 
 ![Julia REPL Screenshot of a lost game of REPLTetris](resources/Screenshot.PNG)
 
-ToDO:
+ToDo:
 - [ ] improve rendering speed
 - [ ] look up and comply with traditional scoring and colors
 - [ ] present upcoming tile to the right
-- [ ] look into better type-structures - `StaticArrays` aren't really needed
+- [x] look into better type-structures - `StaticArrays` aren't really needed
 - [ ] ~~sound & music~~
 
 # Installation & Usage

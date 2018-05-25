@@ -1,19 +1,41 @@
 __precompile__()
 module REPLTetris
 
-using StaticArrays, Crayons
+using Crayons
 export tetris
 
-terminal = nothing  # The user terminal
-
-function __init__()
-    global terminal
-    terminal = Base.Terminals.TTYTerminal(get(ENV, "TERM", is_windows() ? "" : "dumb"), STDIN, STDOUT, STDERR)
-end
-
+include("terminal.jl")
 include("board.jl")
-include("pieces.jl")
+include("tiles.jl")
 include("actions.jl")
-include("game.jl")
+
+function tetris(pause=0.4)
+    board = Board()
+    tile = L()
+    raw_mode(terminal) do
+        abort = [false]
+        @async while !abort[1]
+            board.round += 1
+            tile = add_tile!(board)
+            while !abort[1] && drop!(board, tile)
+                @sync begin
+                    @async print_board(board)
+                    @async sleep(pause)
+                end
+            end
+            delete_lines!(board)
+            pause *= 0.97
+        end
+        while !abort[1]
+            c = readKey()
+            c == Int(ARROW_UP)      && rot_right!(board, tile)
+            c == Int(ARROW_DOWN)    && drop!(board, tile)
+            c == Int(ARROW_RIGHT)   && move_right!(board, tile)
+            c == Int(ARROW_LEFT)    && move_left!(board, tile)
+            c == Int(SPACE)         && fast_drop!(board, tile)
+            c == Int(ABORT)         && (abort[1]=true)
+        end
+    end
+end
 
 end #module

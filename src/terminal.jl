@@ -1,32 +1,6 @@
-function tetris()
-    b = Board()
-    p = L()
-    pause = 0.4
-    raw_mode(terminal) do
-        abort = [false]
-        @async while !abort[1]
-            b.round[1] += 1
-            p = add_piece!(b)
-            while !abort[1] && drop!(b, p)
-                @sync begin
-                    @async print_board(b)
-                    @async sleep(pause)
-                end
-            end
-            delete_lines!(b)
-            pause *= 0.97
-        end
-        while !abort[1]
-            c = readKey()
-            c == Int(ARROW_UP)      && rot_right!(b,p)
-            c == Int(ARROW_DOWN)    && drop!(b,p)
-            c == Int(ARROW_RIGHT)   && move_right!(b,p)
-            c == Int(ARROW_LEFT)    && move_left!(b,p)
-            c == Int(SPACE)         && fast_drop!(b,p)
-            c == Int(ABORT)         && (abort[1]=true)
-        end
-
-    end
+function __init__()
+    global terminal
+    terminal = Base.Terminals.TTYTerminal(get(ENV, "TERM", is_windows() ? "" : "dumb"), STDIN, STDOUT, STDERR)
 end
 
 @enum(Key,
@@ -66,6 +40,7 @@ function raw_mode(f, terminal)
         rawenabled && disableRawMode(terminal); print(terminal.out_stream, "\x1b[?25h")
     end
 end
+
 function enableRawMode(terminal)
     try
         Base.Terminals.raw!(terminal, true)
@@ -75,6 +50,7 @@ function enableRawMode(terminal)
     end
     return false
 end
+
 function disableRawMode(terminal)
     try
         Base.Terminals.raw!(terminal, false)

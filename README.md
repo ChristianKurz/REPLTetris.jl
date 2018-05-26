@@ -8,7 +8,7 @@ Still needs some work to improve rendering speed - but it's suprisingly playable
 ToDo:
 - [ ] improve rendering speed
 - [ ] look up and comply with traditional scoring and colors
-- [ ] present upcoming tile to the right
+- [x] present upcoming tile to the right
 - [x] look into better type-structures - `StaticArrays` aren't really needed
 - [ ] ~~sound & music~~
 
@@ -21,7 +21,8 @@ Julia> using REPLTetris
 Julia> tetris()
 ```
 
-Game is controlled via arrow-keys and space - any other Key will quit the game:
+Game is controlled via arrow-keys and space:
 - `Up`: Rotate Clockwise
 - `Left` / `Right` / `Down`: Move Current Tile
 - `Space`: Drop Current Tile to Bottom
+- `CTRL-C`: Abort Game

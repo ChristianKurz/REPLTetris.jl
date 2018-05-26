@@ -4,18 +4,23 @@ module REPLTetris
 using Crayons
 export tetris
 
-include("terminal.jl")
-include("board.jl")
+include("../Terminal.jl/Terminal.jl")
+using .Terminal
 include("tiles.jl")
+include("board.jl")
 include("actions.jl")
 
-function tetris(pause=0.4)
+function tetris(pause=0.3)
     board = Board()
-    tile = add_tile!(board)
-    raw_mode(terminal) do
+    tile = rand(Tiles)()
+    set_mirrored!(tile, rand(Bool))
+    rawmode() do
         clear_screen()
         abort = [false]
-        @async while !abort[1]
+        @async while !abort[1] && add_tile!(board, tile)
+            nexttile = rand(Tiles)()
+            set_mirrored!(nexttile, rand(Bool))
+            print_tile_preview(nexttile)
             while !abort[1] && drop!(board, tile)
                 @sync begin
                     @async print_board(board)
@@ -23,18 +28,18 @@ function tetris(pause=0.4)
                 end
             end
             delete_lines!(board)
-            pause *= 0.97
+            pause *= 0.99
             board.round += 1
-            tile = add_tile!(board)
+            tile = nexttile
         end
         while !abort[1]
             c = readKey()
-            c == Int(ARROW_UP)      && rot_right!(board, tile)
-            c == Int(ARROW_DOWN)    && drop!(board, tile)
-            c == Int(ARROW_RIGHT)   && move_right!(board, tile)
-            c == Int(ARROW_LEFT)    && move_left!(board, tile)
-            c == Int(SPACE)         && fast_drop!(board, tile)
-            c == Int(ABORT)         && (abort[1]=true)
+            c == "Up"       && rot_right!(board, tile)
+            c == "Down"     && drop!(board, tile)
+            c == "Right"    && move_right!(board, tile)
+            c == "Left"     && move_left!(board, tile)
+            c == " "        && fast_drop!(board, tile)
+            c == "Ctrl-C"   && (abort[1]=true)
         end
     end
 end

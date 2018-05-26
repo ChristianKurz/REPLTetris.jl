@@ -43,3 +43,25 @@ function setindex!(b::Board, s::AbstractArray, tile::Tile)
     x,y = tile.location
     b.data[y:y+dy, x:x+dx] = s
 end
+
+function add_tile!(b::Board, tile::Tile)
+    if all(b[tile] .== 0)
+        b[tile] += data(tile)
+        return true
+    end
+    false
+end
+
+function print_tile_preview(tile::Tile)
+    buf = IOBuffer()
+    for i in 1:4
+        cursor_move_abs(buf, [0, 10+i])
+        cursor_deleteline(buf)
+    end
+    dt = data(tile)'
+    _, dy = size(dt)
+    for i in 1:dy
+        put(buf, [35, 10+i], string(blocks.(dt[:, i])...)) 
+    end
+    print(String(take!(buf)))
+end

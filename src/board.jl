@@ -5,15 +5,6 @@ mutable struct Board
     Board() = new(zeros(Int, 20, 10), 0, 0)
 end
 
-function add_tile!(b::Board, tile=rand(Tiles)())
-    set_mirrored!(tile, rand(Bool))
-    if all(b[tile] .== 0)
-        b[tile] += data(tile)
-        return tile
-    end
-    error("Lost!")
-end
-
 function delete_lines!(b::Board)
     for i in 1:20
         if all(b.data[i, :] .!= 0)
@@ -24,9 +15,10 @@ function delete_lines!(b::Board)
     end
 end
 
+const colors = [:blue, :light_blue, :light_cyan, :light_green, :light_red, :light_yellow, :magenta]
+
 function blocks(i)
     buf = IOBuffer()
-    colors =  [:blue, :light_blue, :light_cyan, :light_green, :light_red, :light_yellow, :magenta]
     block = i==0 ? " ◻ " : " ◼ "
     print(buf, Crayon(foreground = colors[i+1]), block )
     return String(take!(buf))
@@ -37,7 +29,7 @@ function print_board(b)
     for y in 1:21
         cursor_move_abs(buf, [0,y])
         if y == 21
-            print(buf, " Round:", b.round,"\t    Score:",b.score)
+            print(buf, Crayon(foreground = colors[1]), " Round:", b.round,"\t    Score:",b.score)
             continue
         end
         print(buf, blocks.(b.data'[1+10*(y-1):10+10*(y-1)])..., "\r\n")

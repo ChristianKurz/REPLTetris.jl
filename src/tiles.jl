@@ -2,8 +2,8 @@ abstract type Tile end
 set_orientation!(tile::Tile, o::Int) = tile.orientation = o%4
 get_orientation!(tile::Tile) = tile.orientation
 set_mirrored!(tile::Tile, b::Bool) = tile.mirrored = b
-data(::Tile) = error("Needs to be implemented!")
 copy(tile::Tile) = typeof(tile)([getfield(tile, field) for field in fieldnames(tile)]...)
+data(::Tile) = error("Needs to be implemented!")
 
 mutable struct L <: Tile
     location::Array{Int}

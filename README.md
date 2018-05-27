@@ -6,13 +6,6 @@ This is a screenshot playing in the VSCode REPL:
 
 ![Julia REPL Screenshot of a lost game of REPLTetris](resources/Screenshot.PNG)
 
-ToDo:
-- [x] improve rendering speed
-- [x] look up and comply with traditional colors
-- [ ] use traditional scoring & levels
-- [x] present upcoming tile to the right
-- [x] look into better type-structures - `StaticArrays` aren't really needed
-
 # Installation & Usage
 The package is not yet registered in Meta-Data. You will need to clone it from this site:
 

@@ -12,10 +12,10 @@ include("tiles.jl")
 include("board.jl")
 include("actions.jl")
 
-function tetris(pause=0.3, board = Board(), tile = rand(Tiles)())
+function tetris(board = Board(), tile = rand(Tiles)())
     rawmode() do
         clear_screen()
-        update_board!(Board(ones(Int, (20,10)),1,1), board)
+        update_board!(Board(ones(Int, (20,10)),1,1,1), board)
 
         abort = [false]
         @async while !abort[1] && add_tile!(board, tile)
@@ -23,14 +23,14 @@ function tetris(pause=0.3, board = Board(), tile = rand(Tiles)())
             set_mirrored!(nexttile, rand(Bool))
             print_tile_preview(nexttile)
 
-            while !abort[1] && drop!(board, tile) sleep(pause) end
+            while !abort[1] && drop!(board, tile)
+                sleep((0.8 - (board.level-1) * 0.007)^(board.level-1)) 
+            end
 
             delete_lines!(board)
-            pause *= 0.99
-            board.round += 1
             tile = nexttile
         end
-        
+
         while !abort[1]
             c = readKey()
             c == "Up"       && rot_right!(board, tile)

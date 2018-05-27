@@ -1,10 +1,11 @@
 mutable struct Board
     data::Array{Int}
     score::Int
-    round::Int
+    level::Int
+    lines_to_goal::Int
 end
-Board() = Board(zeros(Int, 20, 10), 0, 0)
-copy(b::Board) = Board(copy(b.data), b.score, b.round)
+Board() = Board(zeros(Int, 20, 10), 0, 1, 5)
+copy(b::Board) = Board(copy(b.data), b.score, b.level, b.lines_to_goal)
 
 import Base: getindex, setindex!
 function getindex(b::Board, tile::Tile)
@@ -20,12 +21,19 @@ end
 
 function delete_lines!(board::Board)
     oldboard = copy(board)
+    nr_lines = 0
     for i in 1:20
         if all(board.data[i, :] .!= 0)
             board.data[2:i, :] = board.data[1:i-1, :]
             board.data[1,:] .= 0
-            board.score += board.round
+            nr_lines += 1
         end
+    end
+    board.lines_to_goal -= nr_lines
+    board.score += [0 1 3 5 8][nr_lines+1] * board.level * 100
+    if board.lines_to_goal ≤ 0 
+        board.level += 1
+        board.lines_to_goal += board.level*5
     end
     update_board!(oldboard, board)
 end
@@ -47,9 +55,9 @@ function update_board!(b1::Board, b2::Board)
         y,x = Tuple(I)
         put(buf, [(3*x)-2,y], blocks(b2.data[y,x]))
     end
-    if (b1.round != b2.round) || (b1.score != b2.score)
+    if (b1.level != b2.level) || (b1.score != b2.score)
         cursor_move_abs(buf, [0,21])
-        print(buf, Crayon(foreground = 7), " Round: $(b2.round)\t    Score:$(b2.score)")
+        print(buf, Crayon(foreground = 7), " Level: $(b2.level)\t    Score:$(b2.score)")
     end
     print(String(take!(buf)))
 end

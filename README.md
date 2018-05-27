@@ -3,6 +3,7 @@ This started as an exercise to learn terminal rendering and key-input.
 Rendering is greatily improved through only rendering diffs to the last screen.
 
 This is a screenshot playing in the VSCode REPL:
+
 ![Julia REPL Screenshot of a lost game of REPLTetris](resources/Screenshot.PNG)
 
 ToDo:

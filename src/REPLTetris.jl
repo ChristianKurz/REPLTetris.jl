@@ -20,7 +20,6 @@ function tetris(board = Board(), tile = rand(Tiles)())
         abort = [false]
         @async while !abort[1] && add_tile!(board, tile)
             nexttile = rand(Tiles)()
-            set_mirrored!(nexttile, rand(Bool))
             print_tile_preview(nexttile)
 
             while !abort[1] && drop!(board, tile)

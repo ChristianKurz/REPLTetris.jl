@@ -1,55 +1,54 @@
 abstract type Tile end
-set_orientation!(tile::Tile, o::Int) = tile.orientation = o%4
-get_orientation!(tile::Tile) = tile.orientation
-set_mirrored!(tile::Tile, b::Bool) = tile.mirrored = b
-copy(tile::T) where T<:Tile= T([getfield(tile, field) for field in fieldnames(T)]...)
+copy(tile::N) where N<:Tile= N(tile.location, tile.orientation)
 data(::Tile) = error("Needs to be implemented!")
 
 mutable struct L <: Tile
     location::Array{Int}
     orientation::Int
-    mirrored::Bool
 end
-L() = L([4,1], 0, false)
-data(tile::L) = [1 0 0; 1 1 1] |> x -> rotr90(x, tile.orientation) |>
-                x -> tile.mirrored ? reverse(x * 9 #=orange=#, dims=2) : x * 4 #=blue=#
+L() = L([4,1], 0)
+data(tile::L) = [0 0 1; 1 1 1] * 9 #=orange=#   |> x -> rotr90(x, tile.orientation)
 
-
-mutable struct Snake <: Tile
-    location::Array{Int}
-    orientation::Int
-    mirrored::Bool
-end
-Snake() = Snake([4,1], 0, false)
-data(tile::Snake) = [1 1 0; 0 1 1] |> x -> rotr90(x, tile.orientation) |>
-                x -> tile.mirrored ? reverse(x * 2 #=green=# , dims=2) : x #=red=#
-
-
-mutable struct Bar <: Tile
+mutable struct J <: Tile
     location::Array{Int}
     orientation::Int
 end
-Bar() = Bar([4,2], 0)
-set_mirrored!(::Bar, b::Bool) = return
-data(tile::Bar) = [1 1 1 1] |> x -> rotr90(x * 6 #=cyan=#, tile.orientation)
+J() = J([4,1], 0)
+data(tile::J) = [1 0 0; 1 1 1] * 4 #=blue=#     |> x -> rotr90(x, tile.orientation)
 
+mutable struct S <: Tile
+    location::Array{Int}
+    orientation::Int
+end
+S() = S([4,1], 0)
+data(tile::S) = [0 1 1; 1 1 0] * 2 #=green=#    |> x -> rotr90(x, tile.orientation)
+
+mutable struct Z <: Tile
+    location::Array{Int}
+    orientation::Int
+end
+Z() = Z([4,1], 0)
+data(tile::Z) = [1 1 0; 0 1 1] * 1 #=red=#      |> x -> rotr90(x, tile.orientation)
 
 mutable struct T <: Tile
     location::Array{Int}
     orientation::Int
 end
 T() = T([4,1], 0)
-set_mirrored!(::T, b::Bool) = return
-data(tile::T) = [1 1 1; 0 1 0] |> x -> rotr90(x * 5 #=magenta=#, tile.orientation)
+data(tile::T) = [1 1 1; 0 1 0] * 5 #=magenta=#  |> x -> rotr90(x , tile.orientation)
 
-
-mutable struct Block <: Tile
+mutable struct I <: Tile
     location::Array{Int}
+    orientation::Int
 end
-Block() = Block([5,1])
-set_mirrored!(::Block, b::Bool) = return
-set_orientation!(b::Block, o::Int) = return
-get_orientation!(b::Block) = 0
-data(tile::Block) = [1 1; 1 1] * 3 #=yellow=#
+I() = I([4,2], 0)
+data(tile::I) = [1 1 1 1] * 6 #=cyan=#          |> x -> rotr90(x , tile.orientation)
 
-const Tiles = [L, Snake, Bar, T, Block]
+mutable struct O <: Tile
+    location::Array{Int}
+    orientation::Int
+end
+O() = O([5,1], 0)
+data(tile::O) = [1 1; 1 1] * 3  #=yellow=#
+
+const Tiles = [T, L, J, S, Z, I, O]

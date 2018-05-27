@@ -8,12 +8,12 @@ end
 function affine!(board::Board, tile::Tile, rotation=0, translation=[0,0])
     oldboard = copy(board)
     newtile = copy(tile)
-    set_orientation!(newtile, get_orientation!(newtile) - rotation)
+    newtile.orientation -= rotation
     newtile.location += translation
 
     board[tile] -= data(tile)
     if checkcollision(board,newtile)
-        set_orientation!(tile, get_orientation!(tile) - rotation)
+        tile.orientation -= rotation
         tile.location[:] += translation
         board[tile] += data(tile)
         update_board!(oldboard, board)

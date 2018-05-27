@@ -5,19 +5,21 @@ function checkcollision(b::Board, newtile::Tile)
     x+dx <= 10 && x >= 1 && y+dy <= 20 && !any((b[newtile] .!= 0 ) .& (shape .!= 0)) && return true
 end
 
-function affine!(b::Board, tile::Tile, rotation=0, translation=[0,0])
+function affine!(board::Board, tile::Tile, rotation=0, translation=[0,0])
+    oldboard = copy(board)
     newtile = copy(tile)
     set_orientation!(newtile, get_orientation!(newtile) - rotation)
     newtile.location += translation
 
-    b[tile] -= data(tile)
-    if checkcollision(b,newtile)
+    board[tile] -= data(tile)
+    if checkcollision(board,newtile)
         set_orientation!(tile, get_orientation!(tile) - rotation)
         tile.location[:] += translation
-        b[tile] += data(tile)
+        board[tile] += data(tile)
+        update_board!(oldboard, board)
         return true
     end
-    b[tile] += data(tile)
+    board[tile] += data(tile)
     return false
 end
 
@@ -32,36 +34,12 @@ function fast_drop!(b::Board, tile::Tile)
     return false
 end
 
-import Base: getindex, setindex!
-function getindex(b::Board, tile::Tile)
-    dy,dx = size(data(tile)) .-1
-    x,y = tile.location
-    return b.data[y:y+dy, x:x+dx]
-end
-function setindex!(b::Board, s::AbstractArray, tile::Tile)
-    dy,dx = size(data(tile)) .-1
-    x,y = tile.location
-    b.data[y:y+dy, x:x+dx] = s
-end
-
-function add_tile!(b::Board, tile::Tile)
-    if all(b[tile] .== 0)
-        b[tile] += data(tile)
+function add_tile!(board::Board, tile::Tile)
+    if all(board[tile] .== 0)
+        oldboard = copy(board)
+        board[tile] += data(tile)
+        update_board!(oldboard, board)
         return true
     end
     false
-end
-
-function print_tile_preview(tile::Tile)
-    buf = IOBuffer()
-    for i in 1:4
-        cursor_move_abs(buf, [0, 10+i])
-        cursor_deleteline(buf)
-    end
-    dt = data(tile)'
-    _, dy = size(dt)
-    for i in 1:dy
-        put(buf, [35, 10+i], string(blocks.(dt[:, i])...)) 
-    end
-    print(String(take!(buf)))
 end

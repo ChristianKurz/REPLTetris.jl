@@ -56,6 +56,8 @@ end
 
 function print_tile_preview(tile::Tile)
     buf = IOBuffer()
+    print(buf, Crayon(foreground = 7))
+    put(buf, [35, 9], string("Next Tile:"))
     for i in 1:4
         put(buf, [35, 10+i], string(" "^15))
     end

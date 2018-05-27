@@ -57,7 +57,7 @@ function update_board!(b1::Board, b2::Board)
     end
     if (b1.level != b2.level) || (b1.score != b2.score)
         cursor_move_abs(buf, [0,21])
-        print(buf, Crayon(foreground = 7), " Level: $(b2.level)\t    Score:$(b2.score)")
+        print(buf, Crayon(foreground = 7), " Level: $(b2.level)\tScore:$(b2.score)")
     end
     print(String(take!(buf)))
 end

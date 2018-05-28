@@ -1,10 +1,10 @@
-function readKey(stream::IO=STDIN)
+function readKey(stream::IO=terminal.in_stream)
     readNextChar() = Char(read(stream,1)[1])
     c = readNextChar()
     if c == '\x1b' # Escape
         esc_s = ""
         while isempty(esc_s) || esc_s[end] ∉ ['A','B','C','D','F','H','P','Q','R','S','~']
-            esc_s *= readNextChar() 
+            esc_s *= readNextChar()
         end
         return esc_codes[esc_s]
     elseif Int(c) in 0:31
@@ -16,10 +16,12 @@ end
 
 function testread()
     clear_screen()
+    result = ""
     while result != "Ctrl-C"
+        result = readKey()
         cursor_move_abs([0,0])
         cursor_deleteline()
-        print("read: ", readKey())
+        print("read: ", result)
     end
 end
 

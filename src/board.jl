@@ -31,7 +31,7 @@ function delete_lines!(board::Board)
     end
     board.lines_to_goal -= nr_lines
     board.score += [0 1 3 5 8][nr_lines+1] * board.level * 100
-    if board.lines_to_goal ≤ 0 
+    if board.lines_to_goal ≤ 0
         board.level += 1
         board.lines_to_goal += board.level*5
     end
@@ -41,18 +41,18 @@ end
 function blocks(i)
     buf = IOBuffer()
     block = " ◼ "
-    if i==0 
+    if i==0
         block =" ◻ "
         i += 8
-    end 
+    end
     print(buf, Crayon(foreground = i), block )
     return String(take!(buf))
 end
 
-function update_board!(b1::Board, b2::Board)
+@compat function update_board!(b1::Board, b2::Board)
     buf = IOBuffer()
-    for I in findall(b1.data .⊻ b2.data .!= 0)
-        y,x = Tuple(I)
+    for i in findall(b1.data .⊻ b2.data .!= 0)
+        y,x = ind2sub((20,10), i)
         put(buf, [(3*x)-2,y], blocks(b2.data[y,x]))
     end
     if (b1.level != b2.level) || (b1.score != b2.score)
@@ -72,7 +72,7 @@ function print_tile_preview(tile::Tile)
     dt = data(tile)'
     _, dy = size(dt)
     for i in 1:dy
-        put(buf, [35, 10+i], string(blocks.(dt[:, i])...)) 
+        put(buf, [35, 10+i], string(blocks.(dt[:, i])...))
     end
     print(String(take!(buf)))
 end

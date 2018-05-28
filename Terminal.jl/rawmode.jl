@@ -1,14 +1,14 @@
-function rawmode(f, terminal=terminal, hide_cursor=true)
-    rawenabled = enableRawMode(terminal)
+function rawmode(f, hide_cursor=true)
+    rawenabled = enableRawMode()
     rawenabled && hide_cursor && cursor_hide(terminal.out_stream)
     try
         f()
     finally
-        rawenabled && disableRawMode(terminal); cursor_show(terminal.out_stream)
+        rawenabled && disableRawMode(); cursor_show(terminal.out_stream)
     end
 end
 
-function enableRawMode(terminal)
+function enableRawMode()
     try
         REPL.Terminals.raw!(terminal, true)
         return true
@@ -18,7 +18,7 @@ function enableRawMode(terminal)
     return false
 end
 
-function disableRawMode(terminal)
+function disableRawMode()
     try
         REPL.Terminals.raw!(terminal, false)
         return true

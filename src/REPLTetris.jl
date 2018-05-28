@@ -1,7 +1,7 @@
 __precompile__()
 module REPLTetris
 
-using Crayons
+using Crayons, Compat
 export tetris
 import Base.copy
 
@@ -23,7 +23,7 @@ function tetris(board = Board(), tile = rand(Tiles)())
             print_tile_preview(nexttile)
 
             while !abort[1] && drop!(board, tile)
-                sleep((0.8 - (board.level-1) * 0.007)^(board.level-1)) 
+                sleep((0.8 - (board.level-1) * 0.007)^(board.level-1))
             end
 
             delete_lines!(board)

@@ -51,11 +51,11 @@ function blocks(i)
     return String(take!(buf))
 end
 
-function update_board!(b1::Board, b2::Board)
+@compat function update_board!(b1::Board, b2::Board)
     buf = IOBuffer()
-    for I in Compat.findall(b1.data .⊻ b2.data .!= 0)
+    for I in findall(b1.data .⊻ b2.data .!= 0)
         if VERSION < v"0.7.0-DEV.3025"
-            y,x = Compat.ind2sub(I)
+            y,x = ind2sub(I)
         else
             y,x = Tuple(I)
         end

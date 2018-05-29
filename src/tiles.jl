@@ -1,5 +1,4 @@
 abstract type Tile end
-copy(tile::N) where N<:Tile= N(tile.location, tile.orientation)
 data(::Tile) = error("Needs to be implemented!")
 
 mutable struct L <: Tile

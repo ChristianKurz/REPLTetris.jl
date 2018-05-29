@@ -47,7 +47,8 @@ function blocks(i)
         block =" ◻ "
         i += 8
     end 
-    print(buf, Crayon(foreground = i), block )
+    colors = [:red, :light_red, :yellow, :green, :cyan, :blue, :magenta, :dark_gray]
+    print(buf, Crayon(foreground = colors[i]), block )
     return String(take!(buf))
 end
 

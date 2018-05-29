@@ -53,11 +53,11 @@ end
 
 @compat function update_board!(b1::Board, b2::Board)
     buf = IOBuffer()
-    for I in findall(b1.data .⊻ b2.data .!= 0)
+    for i in findall(b1.data .⊻ b2.data .!= 0)
         if VERSION < v"0.7.0-DEV.3025"
-            y,x = ind2sub(I)
+            y,x = ind2sub((20,10), i)
         else
-            y,x = Tuple(I)
+            y,x = Tuple(i)
         end
         put(buf, [(3*x)-2,y], blocks(b2.data[y,x]))
     end

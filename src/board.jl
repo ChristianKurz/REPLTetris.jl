@@ -1,3 +1,5 @@
+import Base: getindex, setindex!, copy
+
 mutable struct Board
     data::Array{Int}
     score::Int
@@ -7,12 +9,12 @@ end
 Board() = Board(zeros(Int, 20, 10), 0, 1, 5)
 copy(b::Board) = Board(copy(b.data), b.score, b.level, b.lines_to_goal)
 
-import Base: getindex, setindex!
 function getindex(b::Board, tile::Tile)
     dy,dx = size(data(tile)) .-1
     x,y = tile.location
     return b.data[y:y+dy, x:x+dx]
 end
+
 function setindex!(b::Board, s::AbstractArray, tile::Tile)
     dy,dx = size(data(tile)) .-1
     x,y = tile.location
@@ -51,8 +53,12 @@ end
 
 function update_board!(b1::Board, b2::Board)
     buf = IOBuffer()
-    for I in findall(b1.data .⊻ b2.data .!= 0)
-        y,x = Tuple(I)
+    for I in Compat.findall(b1.data .⊻ b2.data .!= 0)
+        if VERSION < v"0.7.0-DEV.3025"
+            y,x = Compat.ind2sub(I)
+        else
+            y,x = Tuple(I)
+        end
         put(buf, [(3*x)-2,y], blocks(b2.data[y,x]))
     end
     if (b1.level != b2.level) || (b1.score != b2.score)

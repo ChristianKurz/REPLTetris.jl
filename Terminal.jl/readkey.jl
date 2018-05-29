@@ -1,4 +1,4 @@
-function readKey(stream::IO=STDIN)
+function readKey(stream::IO=terminal.in_stream)
     readNextChar() = Char(read(stream,1)[1])
     c = readNextChar()
     if c == '\x1b' # Escape

@@ -40,15 +40,16 @@ function delete_lines!(board::Board)
     update_board!(oldboard, board)
 end
 
+const COLORS = [:red, :light_red, :yellow, :green, :cyan, :blue, :magenta, :dark_gray]
+
 function blocks(i)
     buf = IOBuffer()
-    block = " ◼ "
+    block = " ■ "
     if i==0 
-        block =" ◻ "
+        block =" □ "
         i += 8
     end 
-    colors = [:red, :light_red, :yellow, :green, :cyan, :blue, :magenta, :dark_gray]
-    print(buf, Crayon(foreground = colors[i]), block )
+    print(buf, Crayon(foreground = COLORS[i]), block )
     return String(take!(buf))
 end
 
@@ -64,7 +65,7 @@ end
     end
     if (b1.level != b2.level) || (b1.score != b2.score)
         cursor_move_abs(buf, [0,21])
-        print(buf, Crayon(foreground = 7), " Level: $(b2.level)\tScore:$(b2.score)")
+        print(buf, Crayon(foreground = COLORS[8]), " Level: $(b2.level)\tScore:$(b2.score)")
     end
     print(String(take!(buf)))
 end

@@ -1,24 +1,23 @@
 function checkcollision(b::Board)
     x,y = b.location
-    dy, dx = size(rotated_tile(b)) .-1
-    x+dx <= 10 && x >= 1 && y+dy <= 20 && !any((b[b.tile] .!= 0 ) .& (rotated_tile(b) .!= 0))
+    dy, dx = size(rotatedtile(b)) .-1
+    x+dx <= 10 && x >= 1 && y+dy <= 20 && !any((b[b.tile] .!= 0 ) .& (rotatedtile(b) .!= 0))
 end
 
-function affine!(board::Board, rotation=0, translation=[0,0])
-    oldboard = copy(board)
+function affine!(b::Board, rotation=0, translation=[0,0])
+    oldboard = copy(b)
 
-    board[board.tile] -= rotated_tile(board)
-    board.orientation -= rotation
-    board.location[:] += translation
-
-    if checkcollision(board)
-        board[board.tile] += rotated_tile(board)
-        update_board!(oldboard, board)
+    b[b.tile] -= rotatedtile(b)
+    b.orientation -= rotation
+    b.location += translation
+    if checkcollision(b)
+        b[b.tile] += rotatedtile(b)
+        update_board!(oldboard, b)
         return true
     end
-    board.orientation += rotation
-    board.location[:] -= translation
-    board[board.tile] += rotated_tile(board)
+    b.orientation += rotation
+    b.location -= translation
+    b[b.tile] += rotatedtile(b)
     return false
 end
 
@@ -29,19 +28,18 @@ move_left!(b::Board)  = affine!(b,  0, [-1, 0])
 drop!(b::Board)       = affine!(b,  0, [ 0, 1])
 fast_drop!(b::Board)  = (while drop!(b) end; return false)
 
-function hold!(board::Board)
-    if board.allowhold
-        oldboard = copy(board)
+function hold!(b::Board)
+    if b.allowhold
+        oldboard = copy(b)
 
-        board[board.tile] -= data(board.tile)
-        board.tile, board.holdtile = board.holdtile, board.tile
-        board.orientation = 0
-        board.location = start_location(board.tile)
-        board[board.tile] += data(board.tile)
+        b[b.tile] -= rotatedtile(b)
+        b.tile, b.holdtile = b.holdtile, b.tile
+        b.orientation = 0
+        b.location = start_location(b.tile)
+        b[b.tile] += rotatedtile(b)
+        print_hold(b)
+        b.allowhold = false
 
-        update_board!(oldboard, board)
-        
-        print_hold_tile(board)
-        board.allowhold = false
+        update_board!(oldboard, b)
     end
 end

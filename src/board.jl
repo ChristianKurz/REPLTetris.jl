@@ -21,52 +21,52 @@ copy(b::Board) = Board(copy(b.data), b.score, b.level, b.lines_to_goal,
                     copy(b.nexttiles), b.holdtile, b.allowhold)
 
 function getindex(b::Board, tile::Tile)
-    dy,dx = size(rotated_tile(b)) .-1
+    dy,dx = size(rotatedtile(b)) .-1
     x,y = b.location
     return b.data[y:y+dy, x:x+dx]
 end
 
 function setindex!(b::Board, s::AbstractArray, tile::Tile)
-    dy,dx = size(rotated_tile(b)) .-1
+    dy,dx = size(rotatedtile(b)) .-1
     x,y = b.location
     b.data[y:y+dy, x:x+dx] = s
 end
 
-rotated_tile(board::Board) = rotr90(data(board.tile), board.orientation)
+rotatedtile(b::Board) = rotr90(data(b.tile), b.orientation)
 
-function nexttile!(board::Board)
-    push!(board.nexttiles, rand(Tiles)())
-    board.tile = popfirst!(board.nexttiles)
+function nexttile!(b::Board)
+    push!(b.nexttiles, rand(Tiles)())
+    b.tile = popfirst!(b.nexttiles)
 end
 
-function add_tile!(board::Board)
-    nexttile!(board)
-    board.location = start_location(board.tile)
-    board.orientation = 0
-    if all(board[board.tile] .== 0)
-        oldboard = copy(board)
-        board[board.tile] += data(board.tile)
-        update_board!(oldboard, board)
+function add_tile!(b::Board)
+    nexttile!(b)
+    b.location = start_location(b.tile)
+    b.orientation = 0
+    if all(b[b.tile] .== 0)
+        oldboard = copy(b)
+        b[b.tile] += data(b.tile)
+        update_board!(oldboard, b)
         return true
     end
     false
 end
 
-function delete_lines!(board::Board)
-    oldboard = copy(board)
+function delete_lines!(b::Board)
+    oldboard = copy(b)
     nr_lines = 0
     for i in 1:20
-        if all(board.data[i, :] .!= 0)
-            board.data[2:i, :] = board.data[1:i-1, :]
-            board.data[1,:] .= 0
+        if all(b.data[i, :] .!= 0)
+            b.data[2:i, :] = b.data[1:i-1, :]
+            b.data[1,:] .= 0
             nr_lines += 1
         end
     end
-    board.lines_to_goal -= nr_lines
-    board.score += [0 1 3 5 8][nr_lines+1] * board.level * 100
-    if board.lines_to_goal ≤ 0 
-        board.level += 1
-        board.lines_to_goal += board.level*5
+    b.lines_to_goal -= nr_lines
+    b.score += [0 1 3 5 8][nr_lines+1] * b.level * 100
+    if b.lines_to_goal ≤ 0 
+        b.level += 1
+        b.lines_to_goal += b.level*5
     end
-    update_board!(oldboard, board)
+    update_board!(oldboard, b)
 end

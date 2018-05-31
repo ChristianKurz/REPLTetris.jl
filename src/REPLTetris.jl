@@ -19,8 +19,8 @@ function tetris(board = Board())
         abort = [false]
         @async while !abort[1] && add_tile!(board)
             board.allowhold = true
-            print_hold_tile(board)
-            print_tile_preview(board)
+            print_preview(board)
+            print_hold(board)
             while !abort[1] && drop!(board)
                 sleep((0.8 - (board.level-1) * 0.007)^(board.level-1)) 
             end

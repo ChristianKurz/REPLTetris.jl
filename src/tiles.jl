@@ -1,5 +1,4 @@
 abstract type Tile end
-data(::Tile) = error("Needs to be implemented!")
 start_location(::Tile) = [4,1]
 
 struct L <: Tile end

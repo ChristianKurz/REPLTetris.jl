@@ -1,8 +1,5 @@
 # REPLTetris.jl
-This started as an exercise to learn terminal rendering and key-input.
-Rendering is fast as only diffs are rendered.
-
-Tile-colors, scoring, button-mapping, speed and levels are in accordance to the [Tetris Guideline](http://tetris.wikia.com/wiki/Tetris_Guideline).
+This started as an exercise to learn terminal rendering and key-input. Tile-colors, scoring, button-mapping, speed and levels are in accordance to the [Tetris Guideline][1]. T-spins and wall kicks are not yet available, but will be added soon.
 
 This is a screenshot playing in the VSCode REPL:
 
@@ -27,4 +24,7 @@ The game is controlled via arrow-keys, X, Z and space:
 - `Space`: Drop Current Tile to Bottom
 - `X`: Rotate Clockwise
 - `Z`: Rotate Counter Clockwise
+- `C`: Swap current tile with tile on hold
 - `CTRL-C`: Abort Game
+
+[1]: http://tetris.wikia.com/wiki/Tetris_Guideline

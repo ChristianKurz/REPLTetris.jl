@@ -9,6 +9,7 @@ using .Terminal
 
 include("tiles.jl")
 include("board.jl")
+include("printboard.jl")
 include("actions.jl")
 
 function tetris(board = Board())
@@ -16,25 +17,24 @@ function tetris(board = Board())
         clear_screen()
         update_board!(board)
         abort = [false]
-        @async while !abort[1] && add_tile!(board, board.tile)
+        @async while !abort[1] && add_tile!(board)
             board.allowhold = true
             print_hold_tile(board)
             print_tile_preview(board)
-            while !abort[1] && drop!(board, board.tile)
+            while !abort[1] && drop!(board)
                 sleep((0.8 - (board.level-1) * 0.007)^(board.level-1)) 
             end
             delete_lines!(board)
-            board.tile = nexttile(board)
         end
 
         while !abort[1]
             c = readKey()
-            c in ["Up", "x"]    && rot_right!(board, board.tile)
-            c in ["Down"]       && drop!(board, board.tile)
-            c in ["Right"]      && move_right!(board, board.tile)
-            c in ["Left"]       && move_left!(board, board.tile)
-            c in [" "]          && fast_drop!(board, board.tile)
-            c in ["Ctrl", "z"]  && rot_left!(board, board.tile)
+            c in ["Up", "x"]    && rot_right!(board)
+            c in ["Down"]       && drop!(board)
+            c in ["Right"]      && move_right!(board)
+            c in ["Left"]       && move_left!(board)
+            c in [" "]          && fast_drop!(board)
+            c in ["Ctrl", "z"]  && rot_left!(board)
             c in ["c"]          && hold!(board)
             c in ["Ctrl-C"]     && (abort[1]=true)
         end

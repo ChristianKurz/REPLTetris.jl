@@ -20,13 +20,13 @@ copy(b::Board) = Board(copy(b.data), b.score, b.level, b.lines_to_goal,
                     b.tile, b.location, b.orientation,
                     copy(b.nexttiles), b.holdtile, b.allowhold)
 
-function getindex(b::Board, tile::Tile)
+function getindex(b::Board)
     dy,dx = size(rotatedtile(b)) .-1
     x,y = b.location
     return b.data[y:y+dy, x:x+dx]
 end
 
-function setindex!(b::Board, s::AbstractArray, tile::Tile)
+function setindex!(b::Board, s::AbstractArray)
     dy,dx = size(rotatedtile(b)) .-1
     x,y = b.location
     b.data[y:y+dy, x:x+dx] = s
@@ -43,9 +43,9 @@ function add_tile!(b::Board)
     nexttile!(b)
     b.location = start_location(b.tile)
     b.orientation = 0
-    if all(b[b.tile] .== 0)
+    if all(b[] .== 0)
         oldboard = copy(b)
-        b[b.tile] += data(b.tile)
+        b[] += data(b.tile)
         update_board!(oldboard, b)
         return true
     end

@@ -38,3 +38,17 @@ function add_tile!(board::Board, tile::Tile)
     end
     false
 end
+
+function hold!(board::Board)
+    if board.allowhold
+        oldboard = copy(board)
+        board[board.tile] -= data(board.tile)
+        board.tile, board.holdtile = board.holdtile, board.tile
+        board.holdtile.orientation = 0
+        print_hold_tile(board)
+        board.tile.location = [4,1]
+        board[board.tile] += data(board.tile)
+        update_board!(oldboard, board)
+        board.allowhold = false
+    end
+end

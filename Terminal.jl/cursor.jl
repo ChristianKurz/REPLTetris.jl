@@ -40,3 +40,10 @@ function put(buf::IO, pos::Vector, s::String)
     cursor_restore_position(buf)
 end
 put(pos::Vector, s::String) = put(terminal.out_stream, pos::Vector, s::String)
+
+function put(buf::IO, pos::Vector, color::Crayon, s::String)
+    print(buf, color)
+    put(buf, pos, s)
+end
+
+put(buf::IO, pos::Vector, c::Symbol, s::String) = put(buf, pos, Crayon(foreground=c), s)

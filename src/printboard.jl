@@ -1,14 +1,6 @@
-const COLORS = [:red, :light_red, :yellow, :green, :cyan, :blue, :magenta, :dark_gray]
-
-function blocks(i)
-    buf = IOBuffer()
-    block = " ■ "
-    if i==0 
-        block =" □ "
-        i += 8
-    end 
-    print(buf, Crayon(foreground = COLORS[i]), block )
-    return String(take!(buf))
+function block(i)
+    color = [:dark_gray, :red, :light_red, :yellow, :green, :cyan, :blue, :magenta][i+1]
+    return string(Crayon(foreground = color), i==0 ? " □ ": " ■ ")
 end
 
 @compat function update_board!(old::Board, b::Board)
@@ -19,23 +11,20 @@ end
         else
             y,x = Tuple(i)
         end
-        put(buf, [(3*x)-2,y], blocks(b.data[y,x]))
+        put(buf, [(3*x)-2,y], string(block.(b.data[y,x])...))
     end
     if (old.level != b.level) || (old.score != b.score)
-        cursor_move_abs(buf, [0,21])
-        print(buf, Crayon(foreground = COLORS[8]), 
-                " Level: $(b.level)\tScore:$(b.score)")
+        put(buf, [3,21], :dark_gray, "Level: $(b.level)\tScore:$(b.score)")
     end
     print(String(take!(buf)))
 end
 
-update_board!(b::Board) = update_board!(Board(1), b)
+update_board!(b::Board) = update_board!(Board(2), b)
 
 
 function print_preview(b::Board)
     buf = IOBuffer()
-    print(buf, Crayon(foreground = COLORS[8]))
-    put(buf, [33, 2], string("Next Tiles:"))
+    put(buf, [33, 2], :dark_gray, string("Next Tiles:"))
     for (nr, tile) in enumerate(b.nexttiles)
         _print_tile(buf, tile, 2+(nr-1)*4)
     end
@@ -44,8 +33,7 @@ end
 
 function print_hold(b::Board)
     buf = IOBuffer()
-    print(buf, Crayon(foreground = COLORS[8]))
-    put(buf, [33, 16], string("Hold Tile:"))
+    put(buf, [33, 16], :dark_gray, string("Hold Tile:"))
     _print_tile(buf, b.holdtile, 16)
     print(String(take!(buf)))
 end
@@ -54,8 +42,7 @@ function _print_tile(buf, tile, x)
     dt = data(tile)'
     _, dy = size(dt)
     for i in 1:2
-        print(buf, Crayon(foreground = COLORS[8]))
-        put(buf, [35, x+i+1], string(" □ "^4))
-        i <= dy && put(buf, [35, x+i+1], string(blocks.(dt[:, i])...)) 
+        put(buf, [35, x+i+1], :dark_gray, string(" □ "^4))
+        i <= dy && put(buf, [35, x+i+1], string(block.(dt[:, i])...)) 
     end
 end

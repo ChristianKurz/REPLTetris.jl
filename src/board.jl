@@ -12,7 +12,7 @@ mutable struct Board
     holdtile::Tile
     allowhold::Bool
 end
-Board(i=0) = Board(ones(Int, 20, 10)*i, 0, 1, 5, 
+Board(i=0) = Board(ones(Int, 20, 10)*i, 0, 1+i, 5, 
             rand(Tiles)(), [4,1], 0,
             [rand(Tiles)() for i in 1:3], rand(Tiles)(), true)
 

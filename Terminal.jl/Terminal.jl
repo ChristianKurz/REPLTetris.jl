@@ -1,6 +1,6 @@
 module Terminal
 
-using Compat, Compat.REPL
+using Compat, Compat.REPL, Crayons
 export rawmode, clear_screen, readKey, cursor_move_abs, put, cursor_deleteline
 
 @compat function __init__()

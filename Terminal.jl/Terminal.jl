@@ -1,11 +1,11 @@
 module Terminal
 
-using Compat, Compat.REPL
+using Compat, Compat.REPL, Crayons
 export rawmode, clear_screen, readKey, cursor_move_abs, put, cursor_deleteline
 
 @compat function __init__()
     global terminal
-    terminal = REPL.Terminals.TTYTerminal(get(ENV, "TERM", is_windows() ? "" : "dumb"),stdin, stdout, stderr)
+    terminal = REPL.Terminals.TTYTerminal(get(ENV, "TERM", is_windows() ? "" : "dumb"), stdin, stdout, stderr)
 end
 
 include("rawmode.jl")

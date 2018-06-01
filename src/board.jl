@@ -1,78 +1,72 @@
+import Base: getindex, setindex!, copy
+
 mutable struct Board
     data::Array{Int}
     score::Int
     level::Int
     lines_to_goal::Int
+    tile::Tile
+    location::Vector{Int}
+    orientation::Int
+    nexttiles::Vector{Tile}
+    holdtile::Tile
+    allowhold::Bool
 end
-Board() = Board(zeros(Int, 20, 10), 0, 1, 5)
-copy(b::Board) = Board(copy(b.data), b.score, b.level, b.lines_to_goal)
+Board(i=0) = Board(ones(Int, 20, 10)*i, 0, 1+i, 5,
+            rand(Tiles)(), [4,1], 0,
+            [rand(Tiles)() for i in 1:3], rand(Tiles)(), true)
 
-import Base: getindex, setindex!
-function getindex(b::Board, tile::Tile)
-    dy,dx = size(data(tile)) .-1
-    x,y = tile.location
+copy(b::Board) = Board(copy(b.data), b.score, b.level, b.lines_to_goal,
+                    b.tile, b.location, b.orientation,
+                    copy(b.nexttiles), b.holdtile, b.allowhold)
+
+function getindex(b::Board)
+    dy,dx = size(rotatedtile(b)) .-1
+    x,y = b.location
     return b.data[y:y+dy, x:x+dx]
 end
-function setindex!(b::Board, s::AbstractArray, tile::Tile)
-    dy,dx = size(data(tile)) .-1
-    x,y = tile.location
+
+function setindex!(b::Board, s::AbstractArray)
+    dy,dx = size(rotatedtile(b)) .-1
+    x,y = b.location
     b.data[y:y+dy, x:x+dx] = s
 end
 
-function delete_lines!(board::Board)
-    oldboard = copy(board)
+rotatedtile(b::Board) = rotr90(data(b.tile), b.orientation)
+
+function nexttile!(b::Board)
+    push!(b.nexttiles, rand(Tiles)())
+    b.tile = popfirst!(b.nexttiles)
+end
+
+function add_tile!(b::Board)
+    nexttile!(b)
+    b.location = start_location(b.tile)
+    b.orientation = 0
+    if all(b[] .== 0)
+        oldboard = copy(b)
+        b[] += data(b.tile)
+        update_board!(oldboard, b)
+        return true
+    end
+    false
+end
+
+function delete_lines!(b::Board)
+    oldboard = copy(b)
     nr_lines = 0
     for i in 1:20
-        if all(board.data[i, :] .!= 0)
-            board.data[2:i, :] = board.data[1:i-1, :]
-            board.data[1,:] .= 0
+        if all(b.data[i, :] .!= 0)
+            b.data[2:i, :] = b.data[1:i-1, :]
+            b.data[1,:] .= 0
             nr_lines += 1
         end
     end
-    board.lines_to_goal -= nr_lines
-    board.score += [0 1 3 5 8][nr_lines+1] * board.level * 100
-    if board.lines_to_goal ≤ 0
-        board.level += 1
-        board.lines_to_goal += board.level*5
+    b.lines_to_goal -= nr_lines
+    b.score += [0 1 3 5 8][nr_lines+1] * b.level * 100
+    if b.lines_to_goal ≤ 0
+        b.level += 1
+        b.lines_to_goal += b.level*5
     end
-    update_board!(oldboard, board)
-end
-
-function blocks(i)
-    buf = IOBuffer()
-    block = " ◼ "
-    if i==0
-        block =" ◻ "
-        i += 8
-    end
-    print(buf, Crayon(foreground = i), block )
-    return String(take!(buf))
-end
-
-@compat function update_board!(b1::Board, b2::Board)
-    buf = IOBuffer()
-    for i in findall(b1.data .⊻ b2.data .!= 0)
-        y,x = ind2sub((20,10), i)
-        put(buf, [(3*x)-2,y], blocks(b2.data[y,x]))
-    end
-    if (b1.level != b2.level) || (b1.score != b2.score)
-        cursor_move_abs(buf, [0,21])
-        print(buf, Crayon(foreground = 7), " Level: $(b2.level)\tScore:$(b2.score)")
-    end
-    print(String(take!(buf)))
-end
-
-function print_tile_preview(tile::Tile)
-    buf = IOBuffer()
-    print(buf, Crayon(foreground = 7))
-    put(buf, [35, 9], string("Next Tile:"))
-    for i in 1:4
-        put(buf, [35, 10+i], string(" "^15))
-    end
-    dt = data(tile)'
-    _, dy = size(dt)
-    for i in 1:dy
-        put(buf, [35, 10+i], string(blocks.(dt[:, i])...))
-    end
-    print(String(take!(buf)))
+    update_board!(oldboard, b)
 end

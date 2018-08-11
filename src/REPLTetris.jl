@@ -1,7 +1,7 @@
 __precompile__()
 module REPLTetris
 
-using Crayons, TerminalGraphics
+using Crayons, REPLGamesBase
 export tetris
 
 include("tiles.jl")

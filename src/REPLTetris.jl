@@ -1,11 +1,8 @@
 __precompile__()
 module REPLTetris
 
-using Crayons, Compat
+using Crayons, TerminalGraphics
 export tetris
-
-include("../Terminal.jl/Terminal.jl")
-using .Terminal
 
 include("tiles.jl")
 include("board.jl")

@@ -1,16 +1,12 @@
 function block(i)
     color = [:dark_gray, :red, :light_red, :yellow, :green, :cyan, :blue, :magenta][i+1]
-    return string(Crayon(foreground = color), i==0 ? " □ ": " ■ ")
+    return string(Crayon(foreground = color), i==0 ? " □ " : " ■ ")
 end
 
-@compat function update_board!(old::Board, b::Board)
+function update_board!(old::Board, b::Board)
     buf = IOBuffer()
     for i in findall(old.data .⊻ b.data .!= 0)
-        if VERSION < v"0.7.0-DEV.3025"
-            y,x = ind2sub((20,10), i)
-        else
-            y,x = Tuple(i)
-        end
+        y,x = Tuple(i)
         put(buf, [(3*x)-2,y], string(block.(b.data[y,x])...))
     end
     if (old.level != b.level) || (old.score != b.score)
